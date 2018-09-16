@@ -63,13 +63,13 @@ def impression(text):
         if feel not in feels:
             feels.append(feel)
             reply += feel + ', '
-    reply += ". While someone may be made to feel or consider: "
+    reply += ". While someone listening may be made to feel or consider: "
     for element in empath_analytics(text):
         feel2 = element.lower()
         if feel2 not in feels:
             feels.append(feel2)
             reply += element + ', '
-
+    reply += "."
     return reply
 
 if __name__ == '__main__':
