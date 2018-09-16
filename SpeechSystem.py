@@ -54,8 +54,7 @@ def impression(text):
     print(tone_analysis)
     for element in tone_analysis["document_tone"]["tones"]:
         feel = element["tone_id"].lower()
-        if feel not in feels and tone_analysis["document_tone"]["tones"].index(element) != len(
-                tone_analysis["document_tone"]["tones"]) - 1:
+        if feel not in feels and tone_analysis["document_tone"]["tones"].index(element) != len(tone_analysis["document_tone"]["tones"]) - 1:
             feels.append(feel)
             reply += feel + ', '
         elif feel not in feels:
@@ -63,12 +62,18 @@ def impression(text):
 
     reply2 = ". While someone listening may be made to feel or consider: "
     second_line = False
-    for element in empath_analytics(text):
+    lst_sentiments = empath_analytics(text)
+    for element in lst_sentiments:
         feel2 = element.lower()
-        if feel2 not in feels:
+        if feel2 not in feels and lst_sentiments.index(element) != len(lst_sentiments)-1:
             second_line = True
             feels.append(feel2)
             reply2 += element + ', '
+        elif feel2 not in feels:
+            second_line = True
+            feels.append(feel2)
+            reply2 += element
+
     if second_line is True:
         reply += reply2
     reply += "."
