@@ -48,7 +48,7 @@ def impression(text):
     tone_analysis = tone_analyzer.tone(
         {'text': text},
         'application/json').get_result()
-    reply = "Some of the tones that could be percieved from that are: \n"
+    reply = "Some of the tones that could be perceived from that are: "
     feels = []
     print(reply)
     print(tone_analysis)
