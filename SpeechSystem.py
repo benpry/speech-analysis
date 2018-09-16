@@ -4,8 +4,6 @@ from watson_developer_cloud import ToneAnalyzerV3, SpeechToTextV1
 from watson_developer_cloud.websocket import RecognizeCallback, AudioSource
 from os.path import join, dirname
 
-
-
 app = Flask(__name__)
 
 
@@ -25,6 +23,7 @@ def empath_analytics(speech: str) -> list:
             output[key] = value
     return sorted(output, key=output.get, reverse=True)[0:5]
 
+
 tone_analyzer = ToneAnalyzerV3(
     version='2018-09-14',
     username='141978e4-ec25-48b8-865e-bb39e677fd52',
@@ -32,19 +31,14 @@ tone_analyzer = ToneAnalyzerV3(
     url='https://gateway.watsonplatform.net/tone-analyzer/api'
 )
 
+
 @app.route('/get_speech_impression', methods=['POST'])
 def get_speech_impression():
     """This method handles the http requests for the Dialogflow webhook
 
     """
     req = request.get_json(silent=True, force=True)
-    try:
-        action = req.get('queryResult')
-    except AttributeError:
-        return 'json error'
-
     res = impression(req['queryResult']['queryText'])
-
 
     return make_response(jsonify({'fulfillmentText': res}))
 
