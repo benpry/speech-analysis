@@ -54,7 +54,7 @@ def impression(text):
     tone_analysis = tone_analyzer.tone(
         {'text': text},
         'application/json').get_result()
-    reply = "Some of the tones that could be percieved are: \n"
+    reply = "Some of the tones that could be percieved from that are: \n"
     feels = []
     print(reply)
     print(tone_analysis)
@@ -63,14 +63,19 @@ def impression(text):
         if feel not in feels:
             feels.append(feel)
             reply += feel + ', '
-    reply += ". While someone listening may be made to feel or consider: "
+    reply2 = ". While someone listening may be made to feel or consider: "
+    second_line = False
     for element in empath_analytics(text):
         feel2 = element.lower()
         if feel2 not in feels:
+            second_line = True
             feels.append(feel2)
-            reply += element + ', '
+            reply2 += element + ', '
+    if second_line is True:
+        reply += reply2
     reply += "."
     return reply
+
 
 if __name__ == '__main__':
     app.run()
