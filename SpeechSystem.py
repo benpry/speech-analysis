@@ -32,47 +32,6 @@ tone_analyzer = ToneAnalyzerV3(
     url='https://gateway.watsonplatform.net/tone-analyzer/api'
 )
 
-speech_to_text = SpeechToTextV1(
-    username='bd3ede36-d606-47ab-86d4-c86a639764f4',
-    password='Menj5Df2LKKp')
-
-
-class MyRecognizeCallback(RecognizeCallback):
-    def __init__(self):
-        RecognizeCallback.__init__(self)
-        self.text = ""
-
-    def on_data(self, data):
-        for element in data["results"]:
-            self.text += element["alternatives"][0]["transcript"]
-
-    def on_error(self, error):
-        print('Error received: {}'.format(error))
-
-    def on_inactivity_timeout(self, error):
-        print('Inactivity timeout: {}'.format(error))
-
-    def get_text(self):
-        return self.text
-
-
-myRecognizeCallback = MyRecognizeCallback()
-
-with open(join(dirname(__file__), './.', 'Recording.mp3'),
-          'rb') as audio_file:
-    audio_source = AudioSource(audio_file)
-    speech_to_text.recognize_using_websocket(
-        audio=audio_source,
-        content_type='audio/mp3',
-        recognize_callback=myRecognizeCallback,
-        model='en-US_BroadbandModel',
-        keywords=['colorado', 'tornado', 'tornadoes'],
-        keywords_threshold=0.5,
-        max_alternatives=3)
-
-text = myRecognizeCallback.get_text()
-
-
 @app.route('/get_speech_impression', methods=['POST'])
 def get_speech_impression():
     """This method handles the http requests for the Dialogflow webhook
@@ -95,14 +54,21 @@ def impression(text):
     tone_analysis = tone_analyzer.tone(
         {'text': text},
         'application/json').get_result()
-    reply = "Tones in Speech \n"
-
+    reply = "Some of the tones that could be percieved are: \n"
+    feels = []
     print(reply)
     print(tone_analysis)
     for element in tone_analysis["document_tone"]["tones"]:
-        reply += element["tone_id"] + ', '
+        feel = element["tone_id"].lower()
+        if feel not in feels:
+            feels.append(feel)
+            reply += feel + ', '
+    reply += ". While someone may be made to feel or consider: "
     for element in empath_analytics(text):
-        reply += element + ', '
+        feel2 = element.lower()
+        if feel2 not in feels:
+            feels.append(feel2)
+            reply += element + ', '
 
     return reply
 
